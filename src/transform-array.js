@@ -4,54 +4,38 @@ const deletPrevElement ='--discard-prev'
 const doubleNextElement ='--double-next'
 const doublePrevElement ='`--double-prev'
 
-module.exports = function transform(arr=0) {
-  if (arr === 0 || isNaN(arr) && arr === null) {
-    throw new CustomError('THROWN')
+module.exports = function transform(arr) {
+  if (Array.isArray(arr)) {
+    applyDouble(arr);
+    applyDiscard(arr);
+    return arr;
+  } else {
+    throw new Error();
   }
-  if(arr.length === 0) {
-    return []
-  }
-    
-  const dublicatArr = arr.reduce((acc, rec, index ) => {
-         if(acc[index-1] === deletNextElement) {
-           return acc 
-         } else if(arr[index+1] === deletPrevElement) {
-           return acc
-         } else if(acc[index-1] === doubleNextElement) {
-          rec  *= 2
-          return [...acc,rec]
-         }else if(arr[index+1] === doublePrevElement) {
-          rec  *= 2
-          return [...acc,]
-         } 
-         return [...acc, rec] 
-        }, [])
-        
-  return  dublicatArr.filter(it => typeof it === 'number')
+};
 
-  // if(dublicatArr.indexOf(deletNextElement) >= 0  ) {
-     
-  // }
-  // const newArr = arr.reduce((acc, rec,index) => {
-  //    switch(rec) {
-  //      case(deletNextElement):
-  //        index + 1
-  //        return acc
-  //      case(deletPrevElement):
-  //       acc.pop
-  //       return acc
-  //      case(doubleNextElement):
-  //      index +1
-        
-  //      return 
-  //      case(doublePrevElement):
-  //      index - 1
-  //      return rec * 2
-  //      default: 
-  //       return [...acc,rec]
-       
-  //    }
-  // },[])
-  // throw new CustomError('Not implemented');
-  // remove line with error and write your code here
+let applyDouble = function (array) {
+  for (let i = 0; i < array.length; i++) {
+    switch (array[i]) {
+      case '--double-next':
+        if (array[i + 1] === undefined) { array.splice(i, 1); i -= 1; } else { array.splice(i, 1, array[i + 1]); i += 1; }
+        break;
+      case '--double-prev':
+        if (array[i - 1] === undefined) { array.splice(i, 1); i -= 1; } else { array.splice(i, 1, array[i - 1]) }
+        break;
+    }
+  }
+}
+
+let applyDiscard = function (array) {
+  for (let i = 0; i < array.length; i++) {
+    switch (array[i]) {
+      case '--discard-next':
+        if (array[i + 1] === undefined) { array.splice(i, 1); i -= 1; } else { array.splice(i, 2); i -= 1; }
+        break;
+      case '--discard-prev':
+        if (array[i - 1] === undefined) { array.splice(i, 1); i -= 1; } else { array.splice(i - 1, 2); i -= 2; }
+        break;
+    }
+  }
 };
